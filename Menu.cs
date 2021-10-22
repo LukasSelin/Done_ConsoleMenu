@@ -1,6 +1,6 @@
 ﻿namespace Menu_2._0
 {
-    public class Menu : Dictionary<string, Func<bool>> 
+    public class Menu : Dictionary<string, Func<Task<bool>>> 
     {
         private readonly IPainter _painter;
         public Menu(IPainter consolePainter)
@@ -14,45 +14,43 @@
         {
             return Index;
         }
-        internal KeyValuePair<string, Func<bool>> Selected()
+        internal KeyValuePair<string, Func<Task<bool>>> Selected()
         {
             return this.ElementAt(Index); 
         }
-        internal string SelectedTitle()
-        {
-            return Selected().Key;
-        }
-        internal Func<bool> SelctedFunction()
+        internal Func<Task<bool>> SelctedFunction()
         {
             return Selected().Value;
         }
         public async Task<Menu> GetOptionsOnly(Menu menu)
         {
             bool done = false;
-            await Task.Run(() =>
+            do
             {
-                do
+                _painter.Paint(ref menu);
+                var keyInfo = Console.ReadKey();
+                switch (keyInfo.Key)
                 {
-                    Console.CursorVisible = false;
-                    _painter.Paint(ref menu);
-                    var keyInfo = Console.ReadKey();
-                    switch (keyInfo.Key)
-                    {
-                        case ConsoleKey.UpArrow:
-                            MoveUp();
-                            break;
-                        case ConsoleKey.DownArrow:
-                            MoveDown();
-                            break;
-                        case ConsoleKey.Enter:
-                            Console.Clear();
-                            done = SelctedFunction().Invoke();
-                            break;
-                    }
+                    case ConsoleKey.UpArrow:
+                        MoveUp();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        MoveDown();
+                        break;
+                    case ConsoleKey.Enter:
+                        done = await SelctedFunction().Invoke();
+                        break;
                 }
-                while (!done);
-            });
-            return this;
+            }
+            while (!done);
+      
+            _painter.Reset();
+            return menu;
+        }
+        public async Task RepaintMenu(Menu menu)
+        {
+            _painter.Reset();
+            _painter.Paint(ref menu);
         }
     }
 }

@@ -3,5 +3,6 @@
     public interface IPainter
     {
         public void Paint(ref Menu menu);
+        public void Reset();
     }
 }

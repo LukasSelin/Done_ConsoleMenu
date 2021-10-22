@@ -6,7 +6,7 @@ namespace Menu_2._0
         public ConsolePainter(ConsoleColor selectedColor = ConsoleColor.Yellow) => this.selectedColor = selectedColor;
         private Menu menu;
         private readonly ConsoleColor selectedColor;
-        private int ItemCursorIndex { get; set; } = 3;
+        private int ItemCursorIndex { get; set; } = 0;
         private bool IsFirstRun { get; set; } = true;
         private int _ItemIndex { get;set; }
         private int ItemIndex
@@ -26,6 +26,7 @@ namespace Menu_2._0
         }
         public void Paint(ref Menu menu)
         {
+            Console.CursorVisible = false;
             this.menu = menu;
 
             if(IsFirstRun)
@@ -37,6 +38,8 @@ namespace Menu_2._0
                     PrintItem(item, false);
                     ItemIndex++;
                 }
+                PrintItem(menu.Keys.ElementAt(0), true);
+
                 IsFirstRun = false;
             }
             else
@@ -67,6 +70,12 @@ namespace Menu_2._0
             Console.SetCursorPosition(2, ItemCursorIndex + ItemIndex);
             Console.Write(item);
             Console.ResetColor();
+        }
+
+        public void Reset()
+        {
+            Console.Clear();
+            IsFirstRun = true;
         }
     }
 }
