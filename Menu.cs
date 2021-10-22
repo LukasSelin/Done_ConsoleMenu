@@ -45,13 +45,13 @@
                             MoveDown();
                             break;
                         case ConsoleKey.Enter:
+                            Console.Clear();
                             done = SelctedFunction().Invoke();
                             break;
                     }
                 }
                 while (!done);
             });
-
             return this;
         }
     }
